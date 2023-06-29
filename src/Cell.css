@@ -1,0 +1,29 @@
+:root {
+    --size: 60px;
+    --circle-size:45px;
+}
+
+.cell {
+    width: var(--size);
+    height: var(--size);
+    background-color: #BBB;
+    border: 2px black solid;
+    display: flex;
+    justify-content: center;
+}
+
+.circle {
+    width: var(--circle-size);
+    height: var(--circle-size);
+    border-radius: 1000px;
+    align-self: center;
+    border: 1px black solid;
+}
+
+.red {
+    background-color: red;
+}
+
+.yellow {
+    background-color: yellow;
+}
