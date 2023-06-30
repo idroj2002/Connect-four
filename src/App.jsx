@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import './App.css'
 import { Column } from './Column.jsx'
-import { Cell } from './Cell.jsx'
 
 export function App() {
 
@@ -11,23 +10,41 @@ export function App() {
   const [position, setPosition] = useState(Array.from({ length: COLUMNS }, () => []));
   const [nextMovement, setNextMovement] = useState('red');
   const [winner, setWinner] = useState();
+  const [history, setHistory] = useState([[...position]]);
+  const [currentMovement, setCurrentMovement] = useState(0);
 
   const handleClick = (column) => {
-    let newPosition = [...position];
-    newPosition[column].push(nextMovement);
-    setPosition(newPosition);
-    if (nextMovement == 'red') {
-      setNextMovement('yellow');
-    } else {
-      setNextMovement('red');
-    }
+    let newPosition = position.map(subarray => [...subarray]);
+    if (newPosition[column].length < ROWS) {
+      console.log(currentMovement);
+      console.log(currentMovement % 2);
+      console.log(nextMovement);
 
-    checkWinCondition(column, newPosition[column].length - 1);
+      let newHistory = [...history.slice(0, currentMovement + 1)];
+
+      newPosition[column].push(nextMovement);
+      setPosition(newPosition);
+
+      if(!newHistory) {
+        newHistory = [...history];
+      }
+      newHistory.push(newPosition);
+      
+      setHistory(newHistory);
+
+      if (nextMovement == 'red') {
+        setNextMovement('yellow');
+      } else {
+        setNextMovement('red');
+      }
+  
+      setCurrentMovement(currentMovement + 1);
+      checkWinCondition(column, newPosition[column].length - 1);
+    }
   }
 
   const winHandle = (colorOfWinner) => {
     setWinner(colorOfWinner);
-    console.log(winner);
   }
 
   const checkWinCondition = (column, row) => {
@@ -149,12 +166,38 @@ export function App() {
     titleText = `Turn of <span class=${nextMovement}-text><b>&nbsp;${nextMovement}&nbsp;</b></span> player`;
   }
 
+  const movements = history.map((position, move) => {
+    let description = move == 0 ? "Go to game start" : `Go to movement #${move}`;
+
+    return(
+      <li key={move}>
+        <button className='historyButton' onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    );
+  })
+
+  const jumpTo = (move) => {
+    setCurrentMovement(move);
+    if (move % 2 == 0) {
+      setNextMovement('red');
+    } else {
+      setNextMovement('yellow');
+    }
+    setPosition(history[move]);
+  }
+
   return (
     <>
       <h1 className="title" dangerouslySetInnerHTML={{ __html: titleText }}></h1>
 
       <div className='board'>
         { columns }
+      </div>
+
+      <div className='history'>
+        <ol>
+          { movements }
+        </ol>
       </div>
     </>
   )
