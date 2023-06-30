@@ -9,16 +9,16 @@ export function App() {
   const ROWS = 6;
 
   const [position, setPosition] = useState(Array.from({ length: COLUMNS }, () => []));
-  const [nextMovement, setNextMovement] = useState('r');
+  const [nextMovement, setNextMovement] = useState('red');
 
   const handleClick = (column) => {
     let newPosition = [...position];
     newPosition[column].push(nextMovement);
     setPosition(newPosition);
-    if (nextMovement == 'r') {
-      setNextMovement('y');
+    if (nextMovement == 'red') {
+      setNextMovement('yellow');
     } else {
-      setNextMovement('r');
+      setNextMovement('red');
     }
 
     checkWinCondition(column, newPosition[column].length - 1);
@@ -141,8 +141,12 @@ export function App() {
   }
 
   return (
-    <div className='board'>
-      { columns }
-    </div>
+    <>
+      <h1 className="title">Turn of <span className={ `${nextMovement}-text` }><b>&nbsp;{ nextMovement }&nbsp;</b></span> player</h1>
+
+      <div className='board'>
+        { columns }
+      </div>
+    </>
   )
 }

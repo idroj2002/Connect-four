@@ -8,11 +8,11 @@ export function Column({ rows, column, onClick }) {
     if (restantCells.length == 0) {
         cells.unshift(<Cell key={`${i}`} />);
     }
-    else if (restantCells.length > 0 && restantCells[0] == 'r') {
+    else if (restantCells.length > 0 && restantCells[0] == 'red') {
         cells.unshift(<Cell key={`${i}`} color='red' />);
         restantCells.shift();
     }
-    else if (restantCells.length > 0 && restantCells[0] == 'y') {
+    else if (restantCells.length > 0 && restantCells[0] == 'yellow') {
         cells.unshift(<Cell key={`${i}`} color='yellow' />);
         restantCells.shift();
     }
