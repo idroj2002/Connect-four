@@ -10,6 +10,7 @@ export function App() {
 
   const [position, setPosition] = useState(Array.from({ length: COLUMNS }, () => []));
   const [nextMovement, setNextMovement] = useState('red');
+  const [winner, setWinner] = useState();
 
   const handleClick = (column) => {
     let newPosition = [...position];
@@ -24,8 +25,9 @@ export function App() {
     checkWinCondition(column, newPosition[column].length - 1);
   }
 
-  const setWinner = (colorOfWinner) => {
-    console.log(`${colorOfWinner} win!`);
+  const winHandle = (colorOfWinner) => {
+    setWinner(colorOfWinner);
+    console.log(winner);
   }
 
   const checkWinCondition = (column, row) => {
@@ -34,17 +36,17 @@ export function App() {
     // Check horizontal
     if (column > 2 && position[column - 3][row] == colorToCheck) {
       if (checkTwoAtLeft (column, row, colorToCheck)) {
-        setWinner(colorToCheck);
+        winHandle(colorToCheck);
         return;
       }
     } else if (column > 1 && column < COLUMNS - 1 && checkTwoAtLeft(column, row, colorToCheck) && position[column + 1][row] == colorToCheck) {
-      setWinner(colorToCheck);
+      winHandle(colorToCheck);
       return;
     } else if (column > 0 && column < COLUMNS - 2 && position[column - 1][row] == colorToCheck && checkTwoAtRight(column, row, colorToCheck)) {
-      setWinner(colorToCheck);
+      winHandle(colorToCheck);
       return;
     } else if (column < COLUMNS - 3 && checkTwoAtRight(column, row, colorToCheck) && position[column + 3][row]) {
-      setWinner(colorToCheck);
+      winHandle(colorToCheck);
       return;
     }
 
@@ -53,7 +55,7 @@ export function App() {
     position[column].forEach(cell => {
       if (cell == colorToCheck) cellsTogether++; else cellsTogether = 0;
       if (cellsTogether == 4) {
-        setWinner(colorToCheck);
+        winHandle(colorToCheck);
         return;
       }
     })
@@ -61,34 +63,34 @@ export function App() {
     // Check down to up diagonal
     if (column > 2 && row > 2 && position[column - 3][row - 3] == colorToCheck) {
       if (checkTwoAtLeftDown(column, row, colorToCheck)) {
-        setWinner(colorToCheck);
+        winHandle(colorToCheck);
         return;
       }
     } else if (column > 1 && column < COLUMNS - 1 && row > 1 && row < ROWS - 1 && checkTwoAtLeftDown(column, row, colorToCheck) && position[column + 1][row + 1] == colorToCheck) {
-      setWinner(colorToCheck);
+      winHandle(colorToCheck);
       return;
     } else if (column > 0 && column < COLUMNS - 2 && row > 0 && row < ROWS - 2 && position[column - 1][row - 1] == colorToCheck && checkTwoAtRightUp(column, row, colorToCheck)) {
-      setWinner(colorToCheck);
+      winHandle(colorToCheck);
       return;
     } else if (column < COLUMNS - 3 && row < ROWS - 3 && checkTwoAtRightUp(column, row, colorToCheck) && position[column + 3][row + 3] == colorToCheck) {
-      setWinner(colorToCheck);
+      winHandle(colorToCheck);
       return;
     }
 
     // Check up to down diagonal
     if (column > 2 && row < ROWS - 3 && position[column - 3][row + 3] == colorToCheck) {
       if (checkTwoAtLeftUp(column, row, colorToCheck)) {
-        setWinner(colorToCheck);
+        winHandle(colorToCheck);
         return;
       }
     } else if (column > 1 && column < COLUMNS - 1 && row > 0 && row < ROWS - 2 && checkTwoAtLeftUp(column, row, colorToCheck) && position[column + 1][row - 1] == colorToCheck) {
-      setWinner(colorToCheck);
+      winHandle(colorToCheck);
       return;
     } else if (column > 0 && column < COLUMNS - 2 && row > 1 && row < ROWS - 1 && position[column - 1][row + 1] == colorToCheck && checkTwoAtRightDown(column, row, colorToCheck)) {
-      setWinner(colorToCheck);
+      winHandle(colorToCheck);
       return;
     } else if (column < COLUMNS - 3 && row > 2 && checkTwoAtRightDown(column, row, colorToCheck) && position[column + 3][row - 3] == colorToCheck) {
-      setWinner(colorToCheck);
+      winHandle(colorToCheck);
       return;
     }
   }
@@ -140,9 +142,16 @@ export function App() {
     columns.push(<Column rows={ROWS} column={position[i]} key={i} onClick={() => handleClick(i)} />);
   }
 
+  let titleText;
+  if (winner) {
+    titleText = `<span class=${winner}-text><b>${winner}&nbsp;</b></span> win!`
+  } else {
+    titleText = `Turn of <span class=${nextMovement}-text><b>&nbsp;${nextMovement}&nbsp;</b></span> player`;
+  }
+
   return (
     <>
-      <h1 className="title">Turn of <span className={ `${nextMovement}-text` }><b>&nbsp;{ nextMovement }&nbsp;</b></span> player</h1>
+      <h1 className="title" dangerouslySetInnerHTML={{ __html: titleText }}></h1>
 
       <div className='board'>
         { columns }
