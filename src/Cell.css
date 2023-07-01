@@ -1,7 +1,8 @@
 :root {
     --sm-size: 45px;
     --lg-size: 60px;
-    --circle-size:45px;
+    --circle-sm-size: 35px;
+    --circle-lg-size: 45px;
 }
 
 .cell {
@@ -14,8 +15,8 @@
 }
 
 .circle {
-    width: var(--circle-size);
-    height: var(--circle-size);
+    width: var(--circle-sm-size);
+    height: var(--circle-sm-size);
     border-radius: 1000px;
     align-self: center;
     border: 1px black solid;
@@ -33,5 +34,10 @@
     .cell {
         width: var(--lg-size);
         height: var(--lg-size);
+    }
+
+    .circle {
+        width: var(--circle-sm-size);
+        height: var(--circle-sm-size);
     }
 }
