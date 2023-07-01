@@ -202,7 +202,7 @@ export function App() {
   }
 
   return (
-    <div className='aa row d-flex'>
+    <div className='row d-flex'>
       <div className='completeBoard col-sm-12 col-md-8 col-lg-6 d-flex flex-column align-items-sm-center align-items-md-end align-items-lg-end'>
         <h1 className='title d-flex justify-content-center' style={{ '--columns': COLUMNS }} dangerouslySetInnerHTML={{ __html: titleText }}></h1>
 
