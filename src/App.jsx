@@ -9,6 +9,7 @@ export function App() {
 
   const [position, setPosition] = useState(Array.from({ length: COLUMNS }, () => []));
   const [nextMovement, setNextMovement] = useState('red');
+  const [currentWinner, setCurrentWinner] = useState();
   const [winner, setWinner] = useState();
   const [history, setHistory] = useState([[...position]]);
   const [currentMovement, setCurrentMovement] = useState(0);
@@ -16,9 +17,14 @@ export function App() {
   const handleClick = (column) => {
     let newPosition = position.map(subarray => [...subarray]);
     if (newPosition[column].length < ROWS) {
-      console.log(currentMovement);
-      console.log(currentMovement % 2);
-      console.log(nextMovement);
+
+      if (currentWinner) {
+        return;
+      }
+
+      if (currentMovement + 1 < history.length) {
+        setWinner();
+      }
 
       let newHistory = [...history.slice(0, currentMovement + 1)];
 
@@ -31,25 +37,23 @@ export function App() {
       newHistory.push(newPosition);
       
       setHistory(newHistory);
+  
+      setCurrentMovement(currentMovement + 1);
+      checkWinCondition(column, newPosition[column].length - 1, nextMovement);
 
       if (nextMovement == 'red') {
         setNextMovement('yellow');
       } else {
         setNextMovement('red');
       }
-  
-      setCurrentMovement(currentMovement + 1);
-      checkWinCondition(column, newPosition[column].length - 1);
     }
   }
 
   const winHandle = (colorOfWinner) => {
-    setWinner(colorOfWinner);
+    setCurrentWinner(colorOfWinner);
   }
 
-  const checkWinCondition = (column, row) => {
-    let colorToCheck = position[column][row];
-    
+  const checkWinCondition = (column, row, colorToCheck) => {
     // Check horizontal
     if (column > 2 && position[column - 3][row] == colorToCheck) {
       if (checkTwoAtLeft (column, row, colorToCheck)) {
@@ -62,14 +66,16 @@ export function App() {
     } else if (column > 0 && column < COLUMNS - 2 && position[column - 1][row] == colorToCheck && checkTwoAtRight(column, row, colorToCheck)) {
       winHandle(colorToCheck);
       return;
-    } else if (column < COLUMNS - 3 && checkTwoAtRight(column, row, colorToCheck) && position[column + 3][row]) {
+    } else if (column < COLUMNS - 3 && checkTwoAtRight(column, row, colorToCheck) && position[column + 3][row] == colorToCheck) {
       winHandle(colorToCheck);
       return;
     }
 
     // Check vertical
     let cellsTogether = 0;
-    position[column].forEach(cell => {
+    let columnToEvaluate = position[column].slice();
+    columnToEvaluate[row] = colorToCheck;
+    columnToEvaluate.forEach(cell => {
       if (cell == colorToCheck) cellsTogether++; else cellsTogether = 0;
       if (cellsTogether == 4) {
         winHandle(colorToCheck);
@@ -156,14 +162,14 @@ export function App() {
 
   let columns = [];
   for (let i = 0; i < COLUMNS; i++) {
-    columns.push(<Column rows={ROWS} column={position[i]} key={i} onClick={() => handleClick(i)} />);
+    columns.push(<Column rows={ROWS} column={position[i]} key={i} className='me-auto' onClick={() => handleClick(i)} />);
   }
 
   let titleText;
-  if (winner) {
-    titleText = `<span class=${winner}-text><b>${winner}&nbsp;</b></span> win!`
+  if (currentWinner) {
+    titleText = `<span class='${currentWinner}-text'><b>${currentWinner}&nbsp;</b></span> win!`
   } else {
-    titleText = `Turn of <span class=${nextMovement}-text><b>&nbsp;${nextMovement}&nbsp;</b></span> player`;
+    titleText = `Turn of <span class='${nextMovement}-text'><b>&nbsp;${nextMovement}&nbsp;</b></span> player`;
   }
 
   const movements = history.map((position, move) => {
@@ -171,12 +177,21 @@ export function App() {
 
     return(
       <li key={move}>
-        <button className='historyButton' onClick={() => jumpTo(move)}>{description}</button>
+        <button className='historyButton btn' onClick={() => jumpTo(move)}>{description}</button>
       </li>
     );
   })
 
   const jumpTo = (move) => {
+    if (move < history.length - 1) {
+      if (currentWinner != null) {
+        setWinner(currentWinner);
+      }
+      setCurrentWinner();
+    } else {
+      setCurrentWinner(winner);
+    }
+
     setCurrentMovement(move);
     if (move % 2 == 0) {
       setNextMovement('red');
@@ -187,18 +202,22 @@ export function App() {
   }
 
   return (
-    <>
-      <h1 className="title" dangerouslySetInnerHTML={{ __html: titleText }}></h1>
+    <div className='aa row d-flex'>
+      <div className='completeBoard col-sm-12 col-md-8 col-lg-6 d-flex flex-column align-items-sm-center align-items-md-end align-items-lg-end'>
+        <h1 className='title d-flex justify-content-center' style={{ '--columns': COLUMNS }} dangerouslySetInnerHTML={{ __html: titleText }}></h1>
 
-      <div className='board'>
-        { columns }
+        <div className='board d-flex justify-content-center' style={{ '--columns': COLUMNS }}>
+          { columns }
+        </div>
       </div>
 
-      <div className='history'>
-        <ol>
-          { movements }
-        </ol>
+      <div className='historyContainer col d-flex justify-content-sm-center justify-content-md-start justify-content-lg-start'>
+        <div className='history ms-5'>
+          <ol>
+            { movements }
+          </ol>
+        </div>
       </div>
-    </>
+    </div>
   )
 }

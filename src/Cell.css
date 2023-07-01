@@ -1,11 +1,12 @@
 :root {
-    --size: 60px;
+    --sm-size: 45px;
+    --lg-size: 60px;
     --circle-size:45px;
 }
 
 .cell {
-    width: var(--size);
-    height: var(--size);
+    width: var(--sm-size);
+    height: var(--sm-size);
     background-color: #BBB;
     border: 2px black solid;
     display: flex;
@@ -26,4 +27,11 @@
 
 .yellow {
     background-color: yellow;
+}
+
+@media screen and (min-width: 768px) {
+    .cell {
+        width: var(--lg-size);
+        height: var(--lg-size);
+    }
 }
