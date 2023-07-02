@@ -3,6 +3,7 @@
     --lg-size: 60px;
     --circle-sm-size: 35px;
     --circle-lg-size: 45px;
+    --light-gray: #CCC;
 }
 
 .cell {
@@ -37,7 +38,11 @@
     }
 
     .circle {
-        width: var(--circle-sm-size);
-        height: var(--circle-sm-size);
+        width: var(--circle-lg-size);
+        height: var(--circle-lg-size);
+    }
+
+    .isHover {
+        background-color: var(--light-gray);
     }
 }

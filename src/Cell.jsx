@@ -1,9 +1,9 @@
 import './Cell.css'
 
-export function Cell({ color }) {
+export function Cell({ color, isHover }) {
     return (
-        <div className='cell'>
-            { color != undefined ? <div className={`${color} circle`}></div> : <></> }
+        <div className={`cell ${isHover ? 'isHover' : ''}`}>
+            { color != undefined ? <div className={`circle ${color}`}></div> : <></> }
         </div>
     )
 }
